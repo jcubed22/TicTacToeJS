@@ -51,8 +51,8 @@ Board.prototype.find = function(x, y) {
 //GAME STUFF
 
 
-function Game(isActive, playerTurn, players, board, winner) {
-    this.isActive = isActive;
+function Game(isFinished, playerTurn, players, board, winner) {
+    this.isFinished = isFinished;
     this.playerTurn = playerTurn;
     this.players = players;
     this.board = board;
@@ -76,39 +76,106 @@ Game.prototype.createBoard = function() {
 Game.prototype.startGame = function() {
     //select random player based on array index 0,1
     var startingPlayer = Math.floor(Math.random() * (1 + 1));
-    var newGame = new Game(false, startingPlayer);
-    newGame.createPlayers();
-    newGame.createBoard();
+    this.playerTurn = startingPlayer;
+    this.createPlayers();
+    this.createBoard();
 }
 
 Game.prototype.playGame = function() {
-    do{
-        game.newTurn();
+    do {
+        this.newTurn();
 
-        if(game.hasThreeInRow() || game.WHATEVERRULE()) {
-            winner = true;
+        if(game.hasThreeInRow() || game.isDraw()) {
+            this.isFinished = true;
         }
-    } while(winner == false);
+    } while(this.isFinished == false);
 }
 
-Game.prototype.markSpace = function() {
-    var spaceToMark = this.board.find(x,y);
-    if(spaceToMark.markedSpace === null) {
-        spaceToMark.markedSpace = this.players[playerTurn];
+Game.prototype.newTurn = function() {
+
+    //PLAYER 1
+
+    if(this.playerTurn == 0) {
+        //player marks their position on the board
+        var spaceToMark = this.board.find(x,y);
+
+        if(spaceToMark.markedSpace === null) {
+            //mark the space
+            spaceToMark.markedSpace = this.players[playerTurn];
+            //assign playerTurn to player 2
+            this.playerTurn = 1;
+        } else {
+            alert("This space has been marked by " + spaceToMark.markedBy)
+        }
     }
+
+    //PLAYER 2
+    else if(this.playerTurn == 1) {
+        //player marks their position on the board
+        var spaceToMark = this.board.find(x,y);
+
+        if(spaceToMark.markedSpace === null) {
+            spaceToMark.markedSpace = this.players[playerTurn];
+
+            //assign playerTurn to player 2
+            this.playerTurn = 0;
+        } else {
+            alert("This space has been marked by " + spaceToMark.markedBy)
+        }
+    }
+}
+
+Game.prototype.hasThreeInRow = function() {
+    var winningIndexes = [[0,1,2], [0,3,6], [0,4,8], [3,4,5], [1,4,7], [2,4,6], [6,7,8], [2,5,8]];
+    var xSpaces = [];
+    this.board.forEach(function(space) {
+        if(space.markedBy === "X") {
+            xSpaces.push(board.indexOf(space));
+        }
+    });
+    //in here compare the xSpaces to each individual winning indexes
+    //STILL NEEDS TO FIX THIS
+    for ( i = 0, i <= winningIndexes.length, i++) {
+        for(var j = 0; j < winningIndexes[i]; j++) {
+            var counter = 0;
+            if(winningIndexes[i] === test[j]) {
+                counter++;
+                if(counter === winningIndexes.length) {
+                    return true;
+                }
+            }
+        }
+    }
+
     return false;
 }
 
+Game.prototype.isDraw = function() {
 
-Game.prototype.newTurn = function() {
-    if(this.playerTurn == 0) {
-        //player marks space on board
+    return true;
+}
 
-        //assign playerTurn to player 2
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;
+        }
+        else if (this[i] != array[i]) {
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;
+        }
     }
-    if(this.playerTurn == 1) {
-        //player marks space on board
-
-        //assign playerTurn to player 1
-    }
+    return true;
 }
