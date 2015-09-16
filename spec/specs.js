@@ -21,7 +21,7 @@ describe('Space', function() {
     it("lets a player mark a space", function() {
         var testPlayer = new Player("X")
         var testSpace = new Space(1,2);
-        testSpace.mark_by(testPlayer)
+        testSpace.markBy(testPlayer)
         expect(testSpace.markedBy).to.equal(testPlayer);
     });
 });
@@ -37,5 +37,25 @@ describe('Board', function() {
         var testBoard = new Board();
         testBoard.createBoard();
         expect(testBoard.find(1,2)).to.equal(testBoard.spaces[1]);
+    });
+});
+
+describe('Game', function() {
+    it("creates two players", function() {
+        var testGame = new Game();
+        testGame.createPlayers();
+        expect(testGame.players).to.eql([testGame.players[0], testGame.players[1]]);
+    });
+
+    it("creates tic tac toe board", function() {
+        var testGame = new Game();
+        testGame.createBoard();
+        expect(testGame.board).to.be.an('object');
+    });
+
+    it("start game", function() {
+        var testGame = new Game();
+        testGame.startGame();
+        expect(testGame.board).to.be.an('object');
     });
 });
