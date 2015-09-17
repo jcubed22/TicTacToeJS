@@ -36,7 +36,7 @@ describe('Board', function() {
     it("is able to return a particular space by its coordinates", function() {
         var testBoard = new Board();
         testBoard.createBoard();
-        expect(testBoard.find(1,2)).to.equal(testBoard.spaces[1]);
+        expect(testBoard.find(1)).to.equal(testBoard.spaces[1]);
     });
 });
 
@@ -60,10 +60,5 @@ describe('Game', function() {
         expect(testGame.board).to.be.an('object');
     });
 
-    it("start game", function() {
-        var testGame = new Game(false);
-        testGame.startGame();
-        testFunction();
-        expect(testGame.board).to.be.an('object');
-    });
+
 });

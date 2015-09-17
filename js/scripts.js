@@ -37,23 +37,19 @@ Board.prototype.createBoard = function() {
     this.spaces = collectionOfSpaces;
 }
 
-Board.prototype.find = function(x, y) {
-    var foundSpace;
-    this.spaces.forEach(function(space) {
-        if (space.xCoord === x && space.yCoord === y) {
-            foundSpace = space;
-        }
-    });
-    return foundSpace;
+Board.prototype.find = function(id) {
+
+    return this.spaces[id];
 }
 
 
 //GAME STUFF
 
 
-function Game(isFinished, playerTurn, players, board, winner) {
+function Game(isFinished, playerTurn, movesLeft, players, board, winner) {
     this.isFinished = isFinished;
     this.playerTurn = playerTurn;
+    this.movesLeft = movesLeft;
     this.players = players;
     this.board = board;
     this.winner = winner;
@@ -77,31 +73,42 @@ Game.prototype.startGame = function() {
     //select random player based on array index 0,1
     var startingPlayer = Math.floor(Math.random() * (1 + 1));
     this.playerTurn = startingPlayer;
+    this.movesLeft = 9;
     this.createPlayers();
     this.createBoard();
 }
 
-Game.prototype.playGame = function() {
-    do {
-        this.newTurn(x, y);
+Game.prototype.getMark = function(id) {
+    var playerSpaces = [];
 
-        if (game.hasThreeInRow() || game.isDraw()) {
-            this.isFinished = true;
-        }
-    } while (this.isFinished == false);
+    for(space in this.board.spaces) {
+        playerSpaces.push(this.board.spaces[space]);
+    }
+
+    return playerSpaces[id].markedBy;
 }
 
-Game.prototype.newTurn = function(x, y) {
+Game.prototype.playGame = function(id) {
+    if (this.hasThreeInRow() || this.isDraw()) {
+        alert("GAME OVER!");
+    }
+
+    this.newTurn(id);
+}
+
+Game.prototype.newTurn = function(id) {
 
     //PLAYER 1
 
     if (this.playerTurn == 0) {
         //player marks their position on the board
-        var spaceToMark = this.board.find(x, y);
+        var spaceToMark = this.board.find(id);
 
-        if (spaceToMark.markedSpace === null) {
+        if (typeof spaceToMark.markedBy === 'undefined') {
             //mark the space
-            spaceToMark.markedSpace = this.players[playerTurn];
+            spaceToMark.markedBy = this.players[this.playerTurn].mark;
+            this.movesLeft--;
+
             //assign playerTurn to player 2
             this.playerTurn = 1;
         } else {
@@ -112,10 +119,12 @@ Game.prototype.newTurn = function(x, y) {
     //PLAYER 2
     else if (this.playerTurn == 1) {
         //player marks their position on the board
-        var spaceToMark = this.board.find(x, y);
+        var spaceToMark = this.board.find(id);
 
-        if (spaceToMark.markedSpace === null) {
-            spaceToMark.markedSpace = this.players[playerTurn].mark;
+        if (typeof spaceToMark.markedBy === 'undefined') {
+
+            spaceToMark.markedBy = this.players[this.playerTurn].mark;
+            this.movesLeft--;
 
             //assign playerTurn to player 2
             this.playerTurn = 0;
@@ -138,27 +147,53 @@ Game.prototype.hasThreeInRow = function() {
     ];
     //gather all the spaces occupied by player who just went
     var playerSpaces = [];
-    this.board.forEach(function(space) {
-        if (space.markedBy === this.players[playerTurn]) {
-            playerSpaces.push(board.indexOf(space));
+
+    for(space in this.board.spaces) {
+        if (this.board.spaces[space].markedBy === this.players[this.playerTurn].mark) {
+            playerSpaces.push(parseInt(space));
         }
-    });
-    //in here compare the currentPlayer's spaces to each individual winning indexes
-    for (var i = 0; i <= winningIndexes.length; i++) {
-        var counter = 0;
-        for (var j = 0; j <= playerSpaces.length; j++) {
-            if (winningIndexes[i][j] === playerSpaces[j]) {
-                counter++;
-                if (counter === 3) {
-                    return true;
+    }
+
+    //if the player doesn't have 3 combinations, don't run the loop
+    if(playerSpaces.length >= 3) {
+        //in here compare the currentPlayer's spaces to each individual winning indexes
+        for (var i = 0; i <= winningIndexes.length; i++) {
+            var counter = 0;
+            for (var j = 0; j <= playerSpaces.length; j++) {
+                if (winningIndexes[i][j] === playerSpaces[j]) {
+                    counter++;
+                    if (counter === 3) {
+                        this.winner = this.players[this.playerTurn].playerName;
+                        return true;
+                    }
                 }
             }
         }
     }
+
     return false;
 }
 
 Game.prototype.isDraw = function() {
+    if(this.movesLeft === 0) {
+        this.winner = this.players[this.playerTurn].playerName;
+        return true;
+    }
 
-    return true;
+    return false;
 }
+
+var newGame = new Game(false);
+newGame.startGame();
+
+$(document).ready(function() {
+    // var newGame = new Game(false);
+    // newGame.startGame();
+
+    $(".board div").click(function() {
+        var spaceIndex = $(this).attr('class').split(' ')[1];
+        var spaceId = $(this).attr('id');
+        newGame.playGame(spaceIndex);
+        $("#" + spaceId).text(newGame.getMark(spaceIndex));
+    });
+});
