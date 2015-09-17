@@ -115,7 +115,7 @@ Game.prototype.newTurn = function() {
         var spaceToMark = this.board.find(x, y);
 
         if (spaceToMark.markedSpace === null) {
-            spaceToMark.markedSpace = this.players[playerTurn];
+            spaceToMark.markedSpace = this.players[playerTurn].mark;
 
             //assign playerTurn to player 2
             this.playerTurn = 0;
