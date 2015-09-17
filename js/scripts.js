@@ -90,7 +90,8 @@ Game.prototype.getMark = function(id) {
 
 Game.prototype.playGame = function(id) {
     if (this.hasThreeInRow() || this.isDraw()) {
-        alert("GAME OVER!");
+        this.isFinished = true;
+        alert("GAME OVER BITCHE");
     }
 
     this.newTurn(id);
@@ -159,13 +160,14 @@ Game.prototype.hasThreeInRow = function() {
         //in here compare the currentPlayer's spaces to each individual winning indexes
         for (var i = 0; i <= winningIndexes.length; i++) {
             var counter = 0;
-            for (var j = 0; j <= playerSpaces.length; j++) {
+            for (var j = 0; j <= 2; j++) {
                 if (winningIndexes[i][j] === playerSpaces[j]) {
                     counter++;
                     if (counter === 3) {
                         this.winner = this.players[this.playerTurn].playerName;
                         return true;
                     }
+                    return false;
                 }
             }
         }
