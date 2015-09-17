@@ -83,7 +83,7 @@ Game.prototype.startGame = function() {
 
 Game.prototype.playGame = function() {
     do {
-        this.newTurn();
+        this.newTurn(x, y);
 
         if (game.hasThreeInRow() || game.isDraw()) {
             this.isFinished = true;
@@ -91,7 +91,7 @@ Game.prototype.playGame = function() {
     } while (this.isFinished == false);
 }
 
-Game.prototype.newTurn = function() {
+Game.prototype.newTurn = function(x, y) {
 
     //PLAYER 1
 
@@ -136,7 +136,7 @@ Game.prototype.hasThreeInRow = function() {
         [6, 7, 8],
         [2, 5, 8]
     ];
-    //gather all the spaces occupied by player who just went 
+    //gather all the spaces occupied by player who just went
     var playerSpaces = [];
     this.board.forEach(function(space) {
         if (space.markedBy === this.players[playerTurn]) {
