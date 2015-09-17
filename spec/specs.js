@@ -59,4 +59,11 @@ describe('Game', function() {
         expect(testGame.players).to.eql([testGame.players[0], testGame.players[1]]);
         expect(testGame.board).to.be.an('object');
     });
+
+    it("start game", function() {
+        var testGame = new Game(false);
+        testGame.startGame();
+        testFunction();
+        expect(testGame.board).to.be.an('object');
+    });
 });

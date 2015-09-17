@@ -28,9 +28,9 @@ Board.prototype.createBoard = function() {
     var collectionOfSpaces = [];
     var colEdge = 3; //based on a 3x3 board
     var rowEdge = 3; //based on a 3x3 board
-    for(var c = 1; c <= colEdge; c++) {
-        for(var r = 1; r <= rowEdge; r++) {
-            var newSpace = new Space(c,r);
+    for (var c = 1; c <= colEdge; c++) {
+        for (var r = 1; r <= rowEdge; r++) {
+            var newSpace = new Space(c, r);
             collectionOfSpaces.push(newSpace);
         }
     }
@@ -40,7 +40,7 @@ Board.prototype.createBoard = function() {
 Board.prototype.find = function(x, y) {
     var foundSpace;
     this.spaces.forEach(function(space) {
-        if(space.xCoord === x && space.yCoord === y) {
+        if (space.xCoord === x && space.yCoord === y) {
             foundSpace = space;
         }
     });
@@ -85,21 +85,21 @@ Game.prototype.playGame = function() {
     do {
         this.newTurn();
 
-        if(game.hasThreeInRow() || game.isDraw()) {
+        if (game.hasThreeInRow() || game.isDraw()) {
             this.isFinished = true;
         }
-    } while(this.isFinished == false);
+    } while (this.isFinished == false);
 }
 
 Game.prototype.newTurn = function() {
 
     //PLAYER 1
 
-    if(this.playerTurn == 0) {
+    if (this.playerTurn == 0) {
         //player marks their position on the board
-        var spaceToMark = this.board.find(x,y);
+        var spaceToMark = this.board.find(x, y);
 
-        if(spaceToMark.markedSpace === null) {
+        if (spaceToMark.markedSpace === null) {
             //mark the space
             spaceToMark.markedSpace = this.players[playerTurn];
             //assign playerTurn to player 2
@@ -110,11 +110,11 @@ Game.prototype.newTurn = function() {
     }
 
     //PLAYER 2
-    else if(this.playerTurn == 1) {
+    else if (this.playerTurn == 1) {
         //player marks their position on the board
-        var spaceToMark = this.board.find(x,y);
+        var spaceToMark = this.board.find(x, y);
 
-        if(spaceToMark.markedSpace === null) {
+        if (spaceToMark.markedSpace === null) {
             spaceToMark.markedSpace = this.players[playerTurn];
 
             //assign playerTurn to player 2
@@ -126,27 +126,35 @@ Game.prototype.newTurn = function() {
 }
 
 Game.prototype.hasThreeInRow = function() {
-    var winningIndexes = [[0,1,2], [0,3,6], [0,4,8], [3,4,5], [1,4,7], [2,4,6], [6,7,8], [2,5,8]];
-    var xSpaces = [];
+    var winningIndexes = [
+        [0, 1, 2],
+        [0, 3, 6],
+        [0, 4, 8],
+        [3, 4, 5],
+        [1, 4, 7],
+        [2, 4, 6],
+        [6, 7, 8],
+        [2, 5, 8]
+    ];
+    var playerSpaces = [];
     this.board.forEach(function(space) {
-        if(space.markedBy === "X") {
-            xSpaces.push(board.indexOf(space));
+        if (space.markedBy === this.players[playerTurn]) {
+            playerSpaces.push(board.indexOf(space));
         }
     });
     //in here compare the xSpaces to each individual winning indexes
     //STILL NEEDS TO FIX THIS
-    for ( i = 0, i <= winningIndexes.length, i++) {
-        for(var j = 0; j < winningIndexes[i]; j++) {
-            var counter = 0;
-            if(winningIndexes[i] === test[j]) {
+    for (var i = 0; i <= winningIndexes.length; i++) {
+        var counter = 0;
+        for (var j = 0; j <= playerSpaces.length; j++) {
+            if (winningIndexes[i][j] === playerSpaces[j]) {
                 counter++;
-                if(counter === winningIndexes.length) {
+                if (counter === 3) {
                     return true;
                 }
             }
         }
     }
-
     return false;
 }
 
@@ -155,27 +163,30 @@ Game.prototype.isDraw = function() {
     return true;
 }
 
-// attach the .equals method to Array's prototype to call it on any array
-Array.prototype.equals = function (array) {
-    // if the other array is a falsy value, return
-    if (!array)
-        return false;
+function testFunction() {
+    var winningIndexes = [
+        [0, 1, 2],
+        [0, 3, 6],
+        [0, 4, 8],
+        [3, 4, 5],
+        [1, 4, 7],
+        [2, 4, 6],
+        [6, 7, 8],
+        [2, 5, 8]
+    ];
+    var test = [2, 3, 6, 7, 8];
 
-    // compare lengths - can save a lot of time
-    if (this.length != array.length)
-        return false;
-
-    for (var i = 0, l=this.length; i < l; i++) {
-        // Check if we have nested arrays
-        if (this[i] instanceof Array && array[i] instanceof Array) {
-            // recurse into the nested arrays
-            if (!this[i].equals(array[i]))
-                return false;
-        }
-        else if (this[i] != array[i]) {
-            // Warning - two different object instances will never be equal: {x:20} != {x:20}
-            return false;
+    //in here compare the xSpaces to each individual winning indexes
+    for (var i = 0; i <= winningIndexes.length; i++) {
+        var counter = 0;
+        for (var j = 0; j <= test.length; j++) {
+            if (winningIndexes[i][j] === test[j]) {
+                counter++;
+                if (counter === 3) {
+                    return true;
+                }
+            }
         }
     }
-    return true;
+    return false;
 }
