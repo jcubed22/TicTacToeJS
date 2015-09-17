@@ -136,14 +136,14 @@ Game.prototype.hasThreeInRow = function() {
         [6, 7, 8],
         [2, 5, 8]
     ];
+    //gather all the spaces occupied by player who just went 
     var playerSpaces = [];
     this.board.forEach(function(space) {
         if (space.markedBy === this.players[playerTurn]) {
             playerSpaces.push(board.indexOf(space));
         }
     });
-    //in here compare the xSpaces to each individual winning indexes
-    //STILL NEEDS TO FIX THIS
+    //in here compare the currentPlayer's spaces to each individual winning indexes
     for (var i = 0; i <= winningIndexes.length; i++) {
         var counter = 0;
         for (var j = 0; j <= playerSpaces.length; j++) {
@@ -161,32 +161,4 @@ Game.prototype.hasThreeInRow = function() {
 Game.prototype.isDraw = function() {
 
     return true;
-}
-
-function testFunction() {
-    var winningIndexes = [
-        [0, 1, 2],
-        [0, 3, 6],
-        [0, 4, 8],
-        [3, 4, 5],
-        [1, 4, 7],
-        [2, 4, 6],
-        [6, 7, 8],
-        [2, 5, 8]
-    ];
-    var test = [2, 3, 6, 7, 8];
-
-    //in here compare the xSpaces to each individual winning indexes
-    for (var i = 0; i <= winningIndexes.length; i++) {
-        var counter = 0;
-        for (var j = 0; j <= test.length; j++) {
-            if (winningIndexes[i][j] === test[j]) {
-                counter++;
-                if (counter === 3) {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
 }
