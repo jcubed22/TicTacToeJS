@@ -60,7 +60,7 @@ describe('Game', function() {
         expect(testGame.board).to.be.an('object');
     });
 
-    it("start game", function() {
+    it("player 1 has won with three in a row", function() {
         var testGame = new Game(false);
         testGame.startGame();
         testFunction();

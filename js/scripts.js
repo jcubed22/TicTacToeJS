@@ -83,7 +83,7 @@ Game.prototype.startGame = function() {
 
 Game.prototype.playGame = function() {
     do {
-        this.newTurn(x, y);
+        this.newTurn(x,y);
 
         if (game.hasThreeInRow() || game.isDraw()) {
             this.isFinished = true;
@@ -91,7 +91,7 @@ Game.prototype.playGame = function() {
     } while (this.isFinished == false);
 }
 
-Game.prototype.newTurn = function(x, y) {
+Game.prototype.newTurn = function(x,y) {
 
     //PLAYER 1
 
@@ -136,6 +136,7 @@ Game.prototype.hasThreeInRow = function() {
         [6, 7, 8],
         [2, 5, 8]
     ];
+
     //gather all the spaces occupied by player who just went
     var playerSpaces = [];
     this.board.forEach(function(space) {
@@ -143,14 +144,23 @@ Game.prototype.hasThreeInRow = function() {
             playerSpaces.push(board.indexOf(space));
         }
     });
-    //in here compare the currentPlayer's spaces to each individual winning indexes
-    for (var i = 0; i <= winningIndexes.length; i++) {
-        var counter = 0;
-        for (var j = 0; j <= playerSpaces.length; j++) {
-            if (winningIndexes[i][j] === playerSpaces[j]) {
-                counter++;
-                if (counter === 3) {
-                    return true;
+
+    //check if user has more than 3 marks on board, if not return false
+    if(playerSpaces.length >= 3) {
+        //in here compare the currentPlayer's spaces to each individual winning indexes
+        for (var i = 0; i <= winningIndexes.length; i++) {
+            var counter = 0;
+            for (var j = 0; j <= playerSpaces.length; j++) {
+                if (winningIndexes[i][j] === playerSpaces[j]) {
+                    counter++;
+                    if (counter === 3) {
+                        return true;
+                    }
+                }
+                //if there is no match, remove the condition from list
+                //to improve search speed
+                if (winningIndexes.length >= 0) {
+                    winningIndexes.splice([i]);
                 }
             }
         }
@@ -161,4 +171,38 @@ Game.prototype.hasThreeInRow = function() {
 Game.prototype.isDraw = function() {
 
     return true;
+}
+
+function testFunction() {
+    var winningIndexes = [
+        [0, 1, 2],
+        [0, 3, 6],
+        [0, 4, 8],
+        [3, 4, 5],
+        [1, 4, 7],
+        [2, 4, 6],
+        [6, 7, 8],
+        [2, 5, 8]
+    ];
+    var test = [2, 3, 7, 8];
+
+    //check if user has more than 3 marks on board, if not return false
+    if(test.length >= 3) {
+        //in here compare the currentPlayer's spaces to each individual winning indexes
+        for (var i = 0; i <= winningIndexes.length; i++) {
+            var counter = 0;
+            for (var j = 0; j <= test.length; j++) {
+                if (winningIndexes[i][j] === test[j]) {
+                    counter++;
+                    if (counter === 3) {
+                        return true;
+                    }
+                }
+            }
+            //if there is no match, remove the condition from list
+            //to improve search speed
+            winningIndexes.shift();
+        }
+    }
+    return false;
 }
