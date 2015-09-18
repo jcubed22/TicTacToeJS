@@ -78,6 +78,13 @@ Game.prototype.getCurrentPlayer = function() {
     return this.playerTurn;
 }
 
+Game.prototype.getGameStatus = function() {
+  return this.isFinished;
+}
+Game.prototype.endGame = function() {
+  this.isFinished = true;
+}
+
 //game handlers
 Game.prototype.createPlayers = function() {
     var players = [];
@@ -102,12 +109,15 @@ Game.prototype.startGame = function() {
     this.createBoard();
 }
 
+Game.prototype.playGame = function(id) {
+  //check if the user has met winning conditions
+  if (this.hasThreeInRow(this.getCurrentPlayerMark()) || this.isDraw(this.getCurrentPlayerMark())) {
+      this.endGame();
+  }
+  this.newTurn(id);
+}
+
 Game.prototype.newTurn = function(id) {
-    //check if the user has met winning conditions
-    if (this.hasThreeInRow(this.getCurrentPlayerMark()) || this.isDraw(this.getCurrentPlayerMark())) {
-        this.isFinished = true;
-        return;
-    }
     //finds the space object user requests to mark
     var spaceToMark = this.board.find(id);
 
@@ -184,9 +194,9 @@ $(document).ready(function() {
     $(".board div").click(function() {
         var spaceIndex = $(this).attr('class').split(' ')[1];
         var spaceId = $(this).attr('id');
-        newGame.newTurn(spaceIndex);
+        newGame.playGame(spaceIndex);
         $("#" + spaceId).text(newGame.getMark(spaceIndex));
-        if(newGame.isFinished) {
+        if(newGame.getGameStatus()) {
           alert("GAME OVER BITCHES");
         }
     });
