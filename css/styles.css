@@ -1,3 +1,38 @@
-#show-ticket {
-    display: none;
+.container {
+    text-align: center;
+    margin: 12em;
+    padding: 32px;
+}
+
+.board {
+    width: 450px;
+    height: 450px;
+    margin: auto;
+}
+
+.col-xs-1 {
+
+}
+
+#zero, #three, #six {
+    border-top: none;
+}
+
+#zero, #one, #two {
+    border-left: none;
+}
+
+#two, #five, #eight {
+    border-bottom: none;
+}
+
+#six, #seven, #eight {
+    border-right: none;
+}
+
+.space {
+    width: 150px;
+    height: 150px;
+    border: solid black 2px;
+    line-height: 150px;
 }

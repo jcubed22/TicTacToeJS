@@ -11,25 +11,46 @@ function testFunction() {
     ];
     var test = [2, 3, 6, 8];
 
-    //check if user has more than 3 marks on board, if not return false
-    if(test.length >= 3) {
-        //in here compare the currentPlayer's spaces to each individual winning indexes
-        for (var i = 0; i <= winningIndexes.length; i++) {
-            var counter = 0;
-            for (var j = 0; j <= test.length; j++) {
-                if (winningIndexes[i][j] === test[j]) {
-                    counter++;
-                    if (counter === 3) {
-                        return true;
-                    }
-                }
-                //if there is no match, remove the condition from list
-                //to improve search speed
-                if (winningIndexes.length >= 1) {
-                    winningIndexes.splice([i]);
-                }
-            }
+    //in here compare the xSpaces to each individual winning indexes
+    for (var i = 0; i < winningIndexes.length; i++) {
+        if (test.equals(winningIndexes[i])) {
+            return true;
         }
     }
     return false;
 }
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function(array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l = this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;
+        } else if (this[i] != array[i]) {
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;
+        }
+    }
+    return true;
+}
+counter = 0
+for (i = 0, i <= winningIndexes.length, i++) {
+    for (var j = 0; j < winningIndexes[i]; j++) {
+        var counter = 0;
+        if (winningIndexes[i] === test[j]) {
+            counter++;
+            if (counter === winningIndexes.length) {
+                return true;
+            }
+        }
+    }
+    if indexOf(winningIndexes[i]);
