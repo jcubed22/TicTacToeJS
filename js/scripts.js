@@ -6,8 +6,6 @@ function Player(mark, playerName) {
     this.playerName = playerName;
 }
 
-
-
 // SPACE STUFF
 function Space(xCoord, yCoord, markedBy) {
     "use strict";
@@ -142,7 +140,7 @@ Game.prototype.newTurn = function(id) {
             alert("This space has been marked by " + spaceToMark.markedBy);
         }
     } else {
-        alert("GAME OVER BITCHES! Winner: " + this.winner);
+        alert("GAME OVER! Winner: " + this.winner);
     }
 };
 
