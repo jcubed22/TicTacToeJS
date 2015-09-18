@@ -55,6 +55,30 @@ function Game(isFinished, playerTurn, movesLeft, players, board, winner) {
     this.winner = winner;
 }
 
+//getters for variables
+Game.prototype.getCurrentPlayerMark = function() {
+    return this.players[this.playerTurn].mark;
+}
+
+Game.prototype.getCurrentPlayerName = function() {
+    return this.players[this.playerTurn].playerName;
+}
+
+Game.prototype.getMark = function(id) {
+    var playerSpaces = [];
+
+    for(space in this.board.spaces) {
+        playerSpaces.push(this.board.spaces[space]);
+    }
+
+    return playerSpaces[id].markedBy;
+}
+
+Game.prototype.getCurrentPlayer = function() {
+    return this.playerTurn;
+}
+
+//game handlers
 Game.prototype.createPlayers = function() {
     var players = [];
     var player1 = new Player("X", "Player 1");
@@ -78,64 +102,33 @@ Game.prototype.startGame = function() {
     this.createBoard();
 }
 
-Game.prototype.getMark = function(id) {
-    var playerSpaces = [];
-
-    for(space in this.board.spaces) {
-        playerSpaces.push(this.board.spaces[space]);
-    }
-
-    return playerSpaces[id].markedBy;
-}
-
-Game.prototype.playGame = function(id) {
-    if (this.hasThreeInRow() || this.isDraw()) {
-        this.isFinished = true;
-        alert("GAME OVER BITCHE");
-    }
-
-    this.newTurn(id);
-}
-
 Game.prototype.newTurn = function(id) {
-
-    //PLAYER 1
-
-    if (this.playerTurn == 0) {
-        //player marks their position on the board
-        var spaceToMark = this.board.find(id);
-
-        if (typeof spaceToMark.markedBy === 'undefined') {
-            //mark the space
-            spaceToMark.markedBy = this.players[this.playerTurn].mark;
-            this.movesLeft--;
-
-            //assign playerTurn to player 2
-            this.playerTurn = 1;
-        } else {
-            alert("This space has been marked by " + spaceToMark.markedBy)
-        }
+    //check if the user has met winning conditions
+    if (this.hasThreeInRow(this.getCurrentPlayerMark()) || this.isDraw(this.getCurrentPlayerMark())) {
+        this.isFinished = true;
+        return;
     }
+    //finds the space object user requests to mark
+    var spaceToMark = this.board.find(id);
 
-    //PLAYER 2
-    else if (this.playerTurn == 1) {
-        //player marks their position on the board
-        var spaceToMark = this.board.find(id);
+    //verify the space is unoccupied to act upon, or throw error
+    if (typeof spaceToMark.markedBy === 'undefined') {
+        this.movesLeft--;
+        //mark the space
+        spaceToMark.markedBy = this.getCurrentPlayerMark();
 
-        if (typeof spaceToMark.markedBy === 'undefined') {
-
-            spaceToMark.markedBy = this.players[this.playerTurn].mark;
-            this.movesLeft--;
-
-            //assign playerTurn to player 2
-            this.playerTurn = 0;
+        //assigns next player turn
+        if(this.getCurrentPlayer() === 0){
+          this.playerTurn = 1;
         } else {
-            alert("This space has been marked by " + spaceToMark.markedBy)
+          this.playerTurn = 0;
         }
+    } else {
+        alert("This space has been marked by " + spaceToMark.markedBy)
     }
 }
 
-Game.prototype.hasThreeInRow = function() {
+Game.prototype.hasThreeInRow = function(playerMark) {
     var winningIndexes = [
         [0, 1, 2],
         [0, 3, 6],
@@ -148,9 +141,8 @@ Game.prototype.hasThreeInRow = function() {
     ];
     //gather all the spaces occupied by player who just went
     var playerSpaces = [];
-
     for(space in this.board.spaces) {
-        if (this.board.spaces[space].markedBy === this.players[this.playerTurn].mark) {
+        if (this.board.spaces[space].markedBy === playerMark) {
             playerSpaces.push(parseInt(space));
         }
     }
@@ -162,26 +154,23 @@ Game.prototype.hasThreeInRow = function() {
             var counter = 0;
             for (var j = 0; j <= 2; j++) {
                 if (winningIndexes[i][j] === playerSpaces[j]) {
-                    counter++;
+                    counter += 1;
                     if (counter === 3) {
-                        this.winner = this.players[this.playerTurn].playerName;
+                        this.winner = this.getCurrentPlayerName();
                         return true;
                     }
-                    return false;
                 }
+                return false;
             }
         }
     }
-
     return false;
 }
 
 Game.prototype.isDraw = function() {
     if(this.movesLeft === 0) {
-        this.winner = this.players[this.playerTurn].playerName;
         return true;
     }
-
     return false;
 }
 
@@ -195,7 +184,10 @@ $(document).ready(function() {
     $(".board div").click(function() {
         var spaceIndex = $(this).attr('class').split(' ')[1];
         var spaceId = $(this).attr('id');
-        newGame.playGame(spaceIndex);
+        newGame.newTurn(spaceIndex);
         $("#" + spaceId).text(newGame.getMark(spaceIndex));
+        if(newGame.isFinished) {
+          alert("GAME OVER BITCHES");
+        }
     });
 });
