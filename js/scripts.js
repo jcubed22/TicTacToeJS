@@ -165,30 +165,27 @@ Game.prototype.hasThreeInRow = function(playerMark) {
 
     //if the player doesn't have 3 combinations, don't run the loop
     if(playerSpaces.length >= 3) {
-        //in here compare the currentPlayer's spaces to each individual winning indexes
-        var matches = this.countMatches(winningIndexes, playerSpaces);
-        if(matches === 3) {
+    	var matchFound = false;
+
+    	winningIndexes.forEach(function(m){
+    		var matches = 0;
+    		playerSpaces.forEach(function(play) {
+    			if (m.indexOf(play) != -1) {
+    				matches++;
+    			}
+    			if (matches === 3) {
+                    matchFound = true;
+                }
+    		});
+    	});
+        if(matchFound) {
             this.winner = this.getCurrentPlayerName();
-            return true;
         }
+    	return matchFound;
     }
     return false;
 };
 
-Game.prototype.countMatches = function(arr1, arr2) {
-    for (var i = 0; i <= arr1.length; i++) {
-        var counter = 0;
-        for (var j = 0; j <= (arr2.length-1); j++) {
-            if (arr1[i][j] === arr2[j]) {
-                counter++;
-                if (counter === 3) {
-                    return counter;
-                }
-            }
-        }
-    }
-    return counter;
-};
 
 Game.prototype.isDraw = function() {
     if(this.movesLeft === 0) {
